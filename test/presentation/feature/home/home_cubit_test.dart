@@ -19,6 +19,8 @@ void main() {
     decrementUseCase = MockDecrementUseCase();
   });
 
+  const input = 1;
+
   group('HomeCubit', () {
     blocTest<HomeCubit, HomeState>(
       'emits initial state',
@@ -29,30 +31,28 @@ void main() {
     );
 
     blocTest<HomeCubit, HomeState>(
-      'should increment counter to 11',
-      seed: () => HomeState(counter: 10),
+      'should increment counter',
+      seed: () => HomeState(counter: input),
       build: () {
-        const input = 10;
-        when(() => incrementUseCase.run(input)).thenReturn(11);
+        when(() => incrementUseCase.run(input)).thenReturn(input + 1);
         return HomeCubit(incrementUseCase, decrementUseCase);
       },
       act: (cubit) => cubit.increment(),
       expect: () => [
-        HomeState(counter: 11),
+        HomeState(counter: input + 1),
       ],
     );
 
     blocTest<HomeCubit, HomeState>(
-      'should decrement counter to 42',
-      seed: () => HomeState(counter: 43),
+      'should decrement counter',
+      seed: () => HomeState(counter: input),
       build: () {
-        const input = 43;
-        when(() => decrementUseCase.run(input)).thenReturn(42);
+        when(() => decrementUseCase.run(input)).thenReturn(input - 1);
         return HomeCubit(incrementUseCase, decrementUseCase);
       },
       act: (cubit) => cubit.decrement(),
       expect: () => [
-        HomeState(counter: 42),
+        HomeState(counter: input - 1),
       ],
     );
   });
